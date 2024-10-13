@@ -1,12 +1,10 @@
-
 import re
 
 from catalyst import log
 from catalyst.support import CatalystError
 
 
-class ParserBase():
-
+class ParserBase:
     filename = ""
     lines = None
     values = None
@@ -32,8 +30,7 @@ class ParserBase():
             with open(filename, "r") as myf:
                 self.lines = myf.readlines()
         except:
-            raise CatalystError("Could not open file " + filename,
-                                print_traceback=True)
+            raise CatalystError("Could not open file " + filename, print_traceback=True)
         self.filename = filename
         self.parse()
 
@@ -45,7 +42,7 @@ class ParserBase():
         values = {}
         cur_array = []
 
-        trailing_comment = re.compile(r'\s*#.*$')
+        trailing_comment = re.compile(r"\s*#.*$")
 
         for x, myline in enumerate(self.lines):
             myline = myline.strip()
@@ -81,8 +78,7 @@ class ParserBase():
                 if self.multiple_values:
                     cur_array += myline.split()
                 else:
-                    raise CatalystError("Syntax error: %s" %
-                                        x, print_traceback=True)
+                    raise CatalystError("Syntax error: %s" % x, print_traceback=True)
 
             # XXX: Do we really still need this "single value is a string" behavior?
             if len(cur_array) == 2:
@@ -102,15 +98,14 @@ class ParserBase():
             # Make sure the list of keys is static since we modify inside the loop.
             for x in list(values.keys()):
                 # reset None values
-                if isinstance(values[x], str) and values[x].lower() in ['none']:
+                if isinstance(values[x], str) and values[x].lower() in ["none"]:
                     log.info('None value found for key "%s"; reseting', x)
                     values[x] = None
         self.values = values
 
 
 class SpecParser(ParserBase):
-
-    key_value_separator = ':'
+    key_value_separator = ":"
     multiple_values = True
     empty_values = False
     eval_none = True

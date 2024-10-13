@@ -36,14 +36,14 @@ class CatalystLogger(logging.Logger):
 # This is ugly because we want to not perturb the logging module state.
 _klass = logging.getLoggerClass()
 logging.setLoggerClass(CatalystLogger)
-logger = logging.getLogger('catalyst')
+logger = logging.getLogger("catalyst")
 logging.setLoggerClass(_klass)
 del _klass
 
 
 # Set the notice level between warning and info.
 NOTICE = (logging.WARNING + logging.INFO) // 2
-logging.addLevelName(NOTICE, 'NOTICE')
+logging.addLevelName(NOTICE, "NOTICE")
 
 
 # The API we expose to consumers.
@@ -64,7 +64,7 @@ def critical(msg, *args, **kwargs):
     stacklevel = kwargs.get("stacklevel", 1)
     kwargs["stacklevel"] = stacklevel + 1
 
-    status = kwargs.pop('status', 1)
+    status = kwargs.pop("status", 1)
     logger.critical(msg, *args, **kwargs)
     sys.exit(status)
 
@@ -79,23 +79,23 @@ class CatalystFormatter(logging.Formatter):
     """Mark bad messages with colors automatically"""
 
     _COLORS = {
-        'CRITICAL':	'\033[1;35m',
-        'ERROR':	'\033[1;31m',
-        'WARNING':	'\033[1;33m',
-        'DEBUG':	'\033[1;34m',
+        "CRITICAL": "\033[1;35m",
+        "ERROR": "\033[1;31m",
+        "WARNING": "\033[1;33m",
+        "DEBUG": "\033[1;34m",
     }
-    _NORMAL = '\033[0m'
+    _NORMAL = "\033[0m"
 
     @staticmethod
     def detect_color():
         """Figure out whether the runtime env wants color"""
-        if 'NOCOLOR' in os.environ:
+        if "NOCOLOR" in os.environ:
             return False
         return os.isatty(sys.stdout.fileno())
 
     def __init__(self, *args, **kwargs):
         """Initialize"""
-        color = kwargs.pop('color', None)
+        color = kwargs.pop("color", None)
         if color is None:
             color = self.detect_color()
         if not color:
@@ -123,10 +123,10 @@ def setup_logging(level, output=None, debug=False, color=None):
     level = logging.getLevelName(level.upper())
 
     # The good stuff.
-    fmt = '%(asctime)s: %(levelname)-8s: '
+    fmt = "%(asctime)s: %(levelname)-8s: "
     if debug:
-        fmt += '%(filename)s:%(funcName)s:%(lineno)d: '
-    fmt += '%(message)s'
+        fmt += "%(filename)s:%(funcName)s:%(lineno)d: "
+    fmt += "%(message)s"
 
     # Figure out where to send the log output.
     if output is None:
@@ -136,8 +136,8 @@ def setup_logging(level, output=None, debug=False, color=None):
 
     # Use a date format that is readable by humans & machines.
     # Think e-mail/RFC 2822: 05 Oct 2013 18:58:50 EST
-    tzname = time.strftime('%Z', time.localtime())
-    datefmt = '%d %b %Y %H:%M:%S ' + tzname
+    tzname = time.strftime("%Z", time.localtime())
+    datefmt = "%d %b %Y %H:%M:%S " + tzname
     formatter = CatalystFormatter(fmt, datefmt, color=color)
     handler.setFormatter(formatter)
 
